@@ -31,6 +31,7 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (error, client) => {
         .catch((error) => {
             console.log('Unable to fetch the current query');
             throw error;
-        })
-   // client.close();
+        });
+
+   client.close();
 });
