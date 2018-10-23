@@ -29,7 +29,7 @@ app.post('/todos', (request, response) => {
 
 app.get('/todos', (request, response) => {
    Todo.find().then((todos) =>{
-       response.send({todos})
+       response.send({todos});
    }).catch((error) => {
        response.status(400).send(error);
    });
