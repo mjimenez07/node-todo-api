@@ -13,13 +13,13 @@ const todos = [{
     text: 'Second todo'
 }];
 
-describe('POST /todos', () => {
-    beforeEach((done) => {
-        Todo.remove({}).then(() =>  {
-            return Todo.insertMany(todos);
-        }).then(() => done());
-    });
+beforeEach((done) => {
+    Todo.remove({}).then(() =>  {
+        return Todo.insertMany(todos);
+    }).then(() => done());
+});
 
+describe('POST /todos', () => {
     it('should create a new todo',  (done) => {
         const text = 'Foo bah';
         request(app)
@@ -136,5 +136,43 @@ describe('DELETE /todos/:id', () => {
             .delete('/todos/123')
             .expect(404)
             .end(done)
+    });
+});
+
+describe('PATCH /todos/:id', () => {
+    it('should update the todo', (done) => {
+        const hexId = todos[0]._id.toHexString();
+
+        request(app)
+            .patch(`/todos/${hexId}`)
+            .send({
+                text: "Foo bah",
+                completed: true
+            })
+            .expect(200)
+            .expect((response) => {
+                expect(response.body.todo.text).toBe('Foo bah');
+                expect(response.body.todo.completed).toBe(true);
+                expect(response.body.todo.completedAt).toBeA('number');
+            })
+            .end(done);
+    });
+
+    it('should clear completedAt when todo is not completed', (done) => {
+        const hexId = todos[1]._id.toHexString();
+
+        request(app)
+            .patch(`/todos/${hexId}`)
+            .send({
+                text: "Foo bah",
+                completed: false
+            })
+            .expect(200)
+            .expect((response) => {
+                expect(response.body.todo.text).toBe('Foo bah');
+                expect(response.body.todo.completed).toBe(false);
+                expect(response.body.todo.completedAt).toNotExist();
+            })
+            .end(done);
     });
 });
