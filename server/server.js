@@ -66,9 +66,9 @@ app.delete('/todos/:id', (request, response) => {
             return response.status(404).send();
         }
 
-        return response.send({ todo });
+        response.send({ todo });
     }).catch((error) => {
-        return response.send(400).send()
+        response.send(400).send()
     });
 });
 
@@ -92,9 +92,22 @@ app.patch('/todos/:id', (request, response) => {
            return response.status(404).send();
        }
 
-       return response.send({todo});
+       response.send({todo});
     }).catch((error) =>  {
         response.send(400).send();
+    });
+});
+
+app.post('/users', (request, response) => {
+    const { email, password } = request.body;
+    const user = new User({email, password});
+
+    user.save().then(() => {
+        return user.generateAuthToken();
+    }).then((token) => {
+        response.header('x-auth', token).send(user);
+    }).catch((error) =>  {
+        return response.status(400).send();
     });
 });
 
