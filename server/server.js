@@ -106,7 +106,7 @@ app.post('/users', (request, response) => {
     user.save().then(() => {
         return user.generateAuthToken();
     }).then((token) => {
-        response.header('x-auth', token).send(user);
+        response.header('x-auth', token).send({user});
     }).catch((error) =>  {
         return response.status(400).send();
     });
@@ -114,6 +114,18 @@ app.post('/users', (request, response) => {
 
 app.get('/users/me', authenticate, (request, response) => {
     response.send(request.user);
+});
+
+app.post('/users/login', (request, response) => {
+    const { email, password } = request.body;
+
+    User.findByCredentials(email, password).then((user) => {
+        return user.generateAuthToken().then((token) => {
+            response.header('x-auth', token).send({user});
+        });
+    }).catch((error) => {
+        response.status(400).send();
+    });
 });
 
 app.listen(port, () => {
