@@ -15,7 +15,7 @@ const users = [{
             _id: userID,
             access: 'auth'
         },
-            'abc123').toString()
+            process.env.JWT_SECRET).toString()
     }]
 }, {
     _id: secondUserID,
@@ -27,7 +27,7 @@ const users = [{
                 _id: secondUserID,
                 access: 'auth'
             },
-            'abc123').toString()
+            process.env.JWT_SECRET).toString()
     }]
 }];
 
